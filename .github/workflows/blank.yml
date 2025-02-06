@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Create dir for report
-          run: |
+        run: |
             mkdir testArtifacts
 
       - name: Install Newman
