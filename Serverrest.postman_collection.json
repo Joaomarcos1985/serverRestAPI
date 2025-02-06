@@ -1,0 +1,393 @@
+{
+	"info": {
+		"_postman_id": "6fc19c2d-356a-4902-91c6-fc6cbc370b9e",
+		"name": "Serverrest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27588271",
+		"_collection_link": "https://lunar-station-838789.postman.co/workspace/Qualiters-Postman~22376ddd-b555-41d7-838c-ffa6d11ec86f/collection/27588271-6fc19c2d-356a-4902-91c6-fc6cbc370b9e?action=share&source=collection_link&creator=27588271"
+	},
+	"item": [
+		{
+			"name": "Geração de Masa",
+			"item": [
+				{
+					"name": "Buscar Nova Pessoa",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"console.log(pm.response.json().results[0].name.first)",
+									"pm.globals.set(\"UserName\", pm.response.json().results[0].name.first)",
+									"pm.globals.set(\"Useremail\", pm.response.json().results[0].email)",
+									"pm.globals.set(\"UserPassword\", pm.response.json().results[0].login.password)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://randomuser.me/api/",
+							"protocol": "https",
+							"host": [
+								"randomuser",
+								"me"
+							],
+							"path": [
+								"api",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Usuários",
+			"item": [
+				{
+					"name": "Novo cadastro",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.globals.unset('schema')",
+									"",
+									"pm.globals.set('schema', {",
+									"  \"$schema\": \"http://json-schema.org/draft-04/schema#\",",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"message\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"_id\": {",
+									"      \"type\": \"string\"",
+									"    }",
+									"  },",
+									"  \"required\": [",
+									"    \"message\",",
+									"    \"_id\"",
+									"  ]",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"/**",
+									" * Novo cadastro o status esperado é o 201.",
+									" * Voce deverá alterar os snippets de 200 para 201",
+									" */",
+									"",
+									"pm.test(\"Validar status code 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"// validar mensagem com:",
+									"pm.test(\"Validar a mensagem\", function () {",
+									"//expect= me mostre",
+									"    pm.expect(pm.response.json().message).to.be.eql(\"Cadastro realizado com sucesso\")",
+									"    ",
+									"});",
+									"/**",
+									" * Agora precisamos capturar o id e setar esse usuario em uma varialvel",
+									" */",
+									"",
+									"pm.test(\"Capturar id\", function(){",
+									"    pm.globals.set(\"userID\",pm.response.json()._id)",
+									"})",
+									"",
+									"// Testar contratos usar o snippts ( use tiny validator for json data)",
+									"//pegue somente a ultima linha do snippets",
+									"pm.test(\"schema é valido\"), function(){",
+									"    // substitua \"data2\" por pm.response.json",
+									"    // postman pega a variavel schema",
+									"    pm.expect(tv4.validate(pm.response.json(), pm.globals.get('schema'))).to.be.true;",
+									"  ",
+									"   ",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"{{UserName}}\",\n    \"email\": \"{{Useremail}}\",\n    \"password\": \"{{UserPassword}}\",\n    \"administrador\": \"false\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://serverest.dev/usuarios",
+							"protocol": "https",
+							"host": [
+								"serverest",
+								"dev"
+							],
+							"path": [
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar usuário por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"/**",
+									" * O QUE TESTAR?",
+									" * status code;",
+									"teste de contrato;",
+									"validar se o ID retornado foi o solicitado;",
+									"validar o email;",
+									" */",
+									"",
+									"pm.test(\"validar o id retornado\", function () {",
+									"    console.log(pm.globals.get(\"userID\"))",
+									"    console.log(pm.response.json()._id)",
+									"     pm.expect(pm.response.json()._id).to.be.eql(pm.globals.get(\"userID\"))",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar cadastro",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//Testar a mensagem",
+									"pm.test(\"Validar mensagem de registro alterado com sucesso\", function(){",
+									"    pm.expect(pm.response.json().message).to.be.eql(\"Registro alterado com sucesso\")",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"{{UserName}}\",\n    \"email\": \"{{Useremail}}\",\n    \"password\": \"{{UserPassword}}\",\n    \"administrador\": \"true\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar usuário atualizado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validar usuario como administrador\",function(){",
+									"pm.expect(pm.response.json().administrador).to.be.eql(\"true\")",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deletar usuário da base",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//Testar a mensagem",
+									"pm.test(\"Validar mensagem de registro excluido com sucesso\", function(){",
+									"    pm.expect(pm.response.json().message).to.be.eql(\"Registro excluído com sucesso\")",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
