@@ -3,7 +3,7 @@ name: Newman run
 on:
   push:
     branches:
-      - main:
+      - main
 
 
 jobs:
@@ -14,7 +14,11 @@ jobs:
       - name: Create dir for report
         run: |
             mkdir testArtifacts
-
+            
+      - name: Install Node
+        uses: actions/setup-node@v3.4.1 |
+          
+          
       - name: Install Newman
         run: |
           npm install -g newman
