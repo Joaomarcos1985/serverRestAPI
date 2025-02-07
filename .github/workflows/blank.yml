@@ -19,7 +19,7 @@ jobs:
           mkdir testArtifacts
 
       - name: Install Node
-        uses: actions/setup-node@v3.4.1
+        uses: actions/setup-node@v4
         with:
           node-version: 22.13.1  # Ou a versão que você utiliza localmente
 
@@ -36,7 +36,7 @@ jobs:
 
       # Step 6: Upload test report as artifact
       - name: Report
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v4
         with:
           name: Reports
           path: newman
