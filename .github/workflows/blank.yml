@@ -14,11 +14,6 @@ jobs:
       - name: Create dir
         run: mkdir testArtifacts
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16 # ou a versão que você precisa
-          cache: 'npm' # opcional: cacheia os módulos node para builds mais rápidos
 
       - name: Install Newman and Reporters
         run: |
