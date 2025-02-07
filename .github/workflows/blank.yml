@@ -1,35 +1,58 @@
-name: Newman Run
-
+name: Test-API-newman
 on:
-  push:
+  schedule: #Execução agendada de segunda a sexta de 6 em 6 horas
+  - cron: "0 12 * 2 3"
+  
+  push:  #Execução por atualização do github na branch main
     branches:
-      - main
-
+     - 'main'
+      
+  workflow_dispatch:  #Execução manual
+      
+      
 jobs:
-  newman:
+ teste-1:
+    
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
+      # Faz check-out do seu repositório em $GITHUB_WORKSPACE, para que seu trabalho possa acessá-lo
 
-      - name: Criar diretório para artefatos
-        run: | 
-          mkdir testArtifacts
+      - uses: actions/checkout@v3
+  
+  
 
-      # Configuração do ambiente
-      - name: Instalar Node.js
-        uses: actions/setup-node@v4
+    
 
-      - name: Instalar Newman e Reporter
+      # Instalar o node
+      - name: Install Node
+        uses: actions/setup-node@v3.4.1
+        
+
+      # Instale o utilitário de linha de comando newman e também instale o html extra reporter
+
+      - name: Install newman
         run: |
           npm install -g newman
           npm install -g newman-reporter-htmlextra
+          
+      # Crie um diretório para carregar os resultados do teste
 
-      - name: Executar testes
-        run: newman run ServeRest.postman_collection.json -e serveRest_env.postman_environment.json -r cli,htmlextra
+      - name: Make Directory for results
+        run: mkdir -p testResults
 
-      - name: Salvar relatório de testes
-        uses: actions/upload-artifact@v4
+
+      # Execute a coleção POSTMAN
+
+      - name: Run POSTMAN collection on real time
+        run: |
+          newman run testes_hoje.json -e workspace.postman_globals.json
+      
+      - name: Run POSTMAN collection
+        run: |
+          newman run Serverrest.postman_collection.json -e ServeRest.postman_environment.json -r cli,htmlextra
+      # Upload the contents of Test Results directory to workspace
+      - name: Output the run Details
+        uses: actions/upload-artifact@v2
         with:
-          name: Reports
-          path: newman
+          name: RunReports
+          path: testResults
