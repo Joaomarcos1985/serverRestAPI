@@ -1,58 +1,27 @@
-name: Test-API-newman
+name: Newman Run
 on:
-  schedule: #Execução agendada de segunda a sexta de 6 em 6 horas
-  - cron: "0 12 * 2 3"
-  
-  push:  #Execução por atualização do github na branch main
-    branches:
-     - 'main'
-      
-  workflow_dispatch:  #Execução manual
-      
-      
+push:
+branches:
+- main
 jobs:
- teste-1:
-    
-    runs-on: ubuntu-latest
-    steps:
-      # Faz check-out do seu repositório em $GITHUB_WORKSPACE, para que seu trabalho possa acessá-lo
-
-      - uses: actions/checkout@v3
-  
-  
-
-    
-
-      # Instalar o node
-      - name: Install Node
-        uses: actions/setup-node@v3.4.1
-        
-
-      # Instale o utilitário de linha de comando newman e também instale o html extra reporter
-
-      - name: Install newman
-        run: |
-          npm install -g newman
-          npm install -g newman-reporter-htmlextra
-          
-      # Crie um diretório para carregar os resultados do teste
-
-      - name: Make Directory for results
-        run: mkdir -p testResults
-
-
-      # Execute a coleção POSTMAN
-
-      - name: Run POSTMAN collection on real time
-        run: |
-          newman run testes_hoje.json -e workspace.postman_globals.json
-      
-      - name: Run POSTMAN collection
-        run: |
-          newman run Serverrest.postman_collection.json -e ServeRest.postman_environment.json -r cli,htmlextra
-      # Upload the contents of Test Results directory to workspace
-      - name: Output the run Details
-        uses: actions/upload-artifact@v2
-        with:
-          name: RunReports
-          path: testResults
+newman:
+runs-on: ubuntu-latest
+steps:
+- uses: actions/checkout@v3
+- name: Create dir
+run: |
+mkdir testArtifacts
+#Config environement
+- name: Install Node
+uses: actions/setup-node@v3.4.1
+- name: Install Newman
+run: |
+npm install -g newman
+npm install -g newman-reporter-htmlextra
+- name: Run Test
+run: newman run ServeRest.postman_collection.json -e serveRest_env.postman_environment.json -r cli,htmlextra
+- name: Report
+uses: actions/upload-artifact@v3.1.2
+with:
+name: Reports
+path: newman
