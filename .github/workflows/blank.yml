@@ -1,27 +1,40 @@
 name: Newman Run
+
 on:
-push:
-branches:
-- main
+  push:
+    branches:
+      - main
+
 jobs:
-newman:
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v3
-- name: Create dir
-run: |
-mkdir testArtifacts
-#Config environement
-- name: Install Node
-uses: actions/setup-node@v3.4.1
-- name: Install Newman
-run: |
-npm install -g newman
-npm install -g newman-reporter-htmlextra
-- name: Run Test
-run: newman run ServeRest.postman_collection.json -e serveRest_env.postman_environment.json -r cli,htmlextra
-- name: Report
-uses: actions/upload-artifact@v3.1.2
-with:
-name: Reports
-path: newman
+  newman:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - uses: actions/checkout@v3
+
+      # Step 2: Create directory for storing test artifacts
+      - name: Create dir
+        run: |
+          mkdir testArtifacts
+
+      # Step 3: Install Node.js environment
+      - name: Install Node
+        uses: actions/setup-node@v3.4.1
+
+      # Step 4: Install Newman and Newman Reporter
+      - name: Install Newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      # Step 5: Run the tests using Newman
+      - name: Run Test
+        run: newman run ServeRest.postman_collection.json -e serveRest_env.postman_environment.json -r cli,htmlextra
+
+      # Step 6: Upload test report as artifact
+      - name: Report
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: Reports
+          path: newman
