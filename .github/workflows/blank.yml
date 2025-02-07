@@ -18,9 +18,11 @@ jobs:
         run: |
           mkdir testArtifacts
 
-      # Step 3: Install Node.js environment
       - name: Install Node
         uses: actions/setup-node@v3.4.1
+        with:
+          node-version: 22.13.1  # Ou a versão que você utiliza localmente
+
 
       # Step 4: Install Newman and Newman Reporter
       - name: Install Newman
