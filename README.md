@@ -2,7 +2,7 @@
 ## Testes de API Rest do manual ao CI/CD
 Criação de testes de API utilizando postaman, newman  e newman-htmlextra
 
-## O que é
+## O que é:
 Este repositorio foi criado para o bootcamp de teste de API Rest.
 
 ## Tecnologias utilizadas
